@@ -1,0 +1,45 @@
+html {
+    background-color : white;
+    margin : 0 auto;
+    padding : 0 auto;
+  }
+
+  body {
+    padding-top : 54px;
+    position : relative;
+  }
+  
+  @media (min-width : 992px) {
+    body {
+      padding-top : 56px;
+    }
+  }
+  
+  #map {
+    height : 94vh;
+    width : 70vw;
+    display : inline-block;
+    float : left;
+  }
+  
+  #pan {
+    font-family : Ubuntu;
+    height : 94vh;
+    width : 29vw;
+    display : inline-block;
+    float : right;
+  }
+  
+  .big_labels{
+    text-align : center;
+    color : white;
+    background-color : #202020;
+    font-weight: bold;
+  }
+  
+  .little_labels{
+    display : inline-block;
+    float : left;
+    padding-right : 30px;
+    font-weight : bold;
+  }

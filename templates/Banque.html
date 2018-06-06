@@ -1,0 +1,41 @@
+{% include 'Includes/header.html' %}
+
+<title>Banque de données</title>
+
+<div class="container">
+
+<h1 class="titre" style = "padding-bottom: 2%;"> Banque de données </h1>
+
+
+	<div id="accordion">
+
+			{% for campagne in rowsCampagne %}
+
+				<h3>{{campagne["nom"]}}</h3>
+				
+				<div>
+					{% for session in rowsSession %}
+
+						{% if session["campagneid"] == campagne["id"]%}
+						<li> Session : {{ session["sessionid"] }} </li>
+						<p> <a href={{ url_for('chemin',sessionid = session["sessionid"])}} > Chemin de la session </a> </p>
+						{% endif %}
+
+					{% endfor %}
+				</div>
+			{% endfor %}
+      
+			
+	</div>
+</div>
+  </body>
+
+
+<!-- SCRIPT ET RESSOURCES -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script> $( function() { $( "#accordion" ).accordion(); } ); </script>
+
+</html>

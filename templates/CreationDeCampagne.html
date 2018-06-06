@@ -1,0 +1,23 @@
+{% include 'Includes/header.html' %}
+{% from "_formhelpers.html" import render_field %}
+
+<title>Creation de campagne</title>
+<div class="container">
+	<h1 class="titre">Creation d'une nouvelle campagne</h1>
+
+	<form method=post enctype=multipart/form-data>
+		<dl>
+			{{ render_field(form.nom) }}
+		</dl>
+
+		<dl>
+			{{ render_field(form.countdown) }}
+		</dl>
+
+		<p><input type=file name=file >
+
+			<p><input type=submit value=Confirmer>
+	</form>
+</div>
+</body>
+</html>

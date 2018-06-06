@@ -1,0 +1,29 @@
+{% include 'Includes/header.html' %}
+
+<title>Selection de campagne</title>
+
+<div class="container">
+	<table class="table">
+		<thead class="thead-dark">
+			<tr>
+				<th>Id</th>
+				<th>Nom</th>
+			</tr>
+		</thead>
+		{# Affichage de la liste ds campagnes #}
+		<tbody>
+			{% for row in rows %}
+			<tr>
+				<td>{{row["id"]}}</td>
+				{#L'id de la campagne selectionée est passé par la fonction url_for #}
+				<td><a href={{ url_for('session',campagneId = row["id"])}}>{{row["nom"]}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>       
+			
+		</table>
+	</div>
+
+</body>
+
+</html>
