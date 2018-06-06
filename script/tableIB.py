@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pandas as pd
+from pandas import ExcelFile
 import random
 from collections import OrderedDict
 
@@ -112,7 +112,7 @@ def parseExcel(xlsfile, idcampagne):
 
 	# Dictionnaire des criteres ( prix, qualitée etc ... )
 	# Dictionnaire des alternatives (Produit1 Produit2 Produit3)
-	df = pd.ExcelFile(xlsfile).parse(pd.ExcelFile(xlsfile).sheet_names[0])
+	df = ExcelFile(xlsfile).parse(ExcelFile(xlsfile).sheet_names[0])
 	alternatives = [row[0] for row in df.iterrows()]
 
 	#Nous faisons venir la fonction Getimage.imageDansExcel qui nous renvois un tableau d'Image.

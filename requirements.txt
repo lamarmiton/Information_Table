@@ -1,4 +1,2 @@
 flask
-wtforms
-pandas
 
