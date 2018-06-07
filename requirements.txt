@@ -2,3 +2,4 @@ flask
 wtforms
 pandas
 xlrd
+openpyxl.workbook
