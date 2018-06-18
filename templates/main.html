@@ -7,19 +7,43 @@
 
 
 	<h1 class="titre"> Index : Creation de table d'informations </h1>
-
-	<img src="https://lh3.googleusercontent.com/4dAG-nShIc1vKzEQtTbhQPHZUdI_sou5Q_LS1ZZPg9tR0MtL62k-azEjF6TV3nDbW1Le1iZ0b23w9RKcBb5ssQzl8HEpuw3tqF3g3ipPOnL3xf1uFw4UMrIHCTnDx6YhHaYCe76b"> 
-
-	<h2> Module à incorporer </h2>
-	<li>Mise en place de session </li>
-	<p>		Creation/Suppression de campagne pour l'administrateur</p>
-	<p>		Mise en place de la participation des répondants</p>
-
-	<img src="https://lh4.googleusercontent.com/QE4mzIPwqVSql9xgsODkgOyfdNJjVxpoNDjou6-0tm_i-zaJKwieFXK4fucIvgYqEL1_HtkQqrR7euDRy9CgjXriZPRyiLttD551uVrU9mscSylW2l8mLky-WpoTJxHiifmOMf9N">
-
-	<h2> Application REST </h2>
-	<img src="https://docs.google.com/drawings/d/sDq8aUJ6FsK_AzH36GO4YvQ/image?w=774&h=408&rev=1820&ac=1">
-
+	
+	<h2 class="titre"> Manuel d'utilisation </h2>
+	
+	<h3 class="titre">Introduction</h3>
+	<p>Bonjour, et bienvenue dans l'application de création de table d'information.
+	
+	L'application fonctionne autour des créations de campagne. Une campagne est un modèle à partir duquel une session
+	est générée. Vous pourrez récupérer le chemin de résolution du participant dans la banque de données.</p>
+	
+	
+	<h3 class="titre">Les campagnes</h3>
+	
+	<p> 
+	Pour créer une campagne, rendez vous dans l'onglet création de campagne. Vous devrez renseigner le nom de la campagne,
+	la durée de la campagne en seconde, ainsi qu'un fichier Excel au format <b>.xlsx</b>. Le fichier devra être de la forme suivante :
+	</p>
+	
+    <img src="https://i.imgur.com/GJJIXM4.png" href="https://docs.google.com/spreadsheets/d/1lutLO8j5i3Ne5qgTy-vfPjOte-Y8iAMST4P5cjwYgQo/edit#gid=0">
+    
+    <p>
+        La première case du tableau, en haut à droite dois être vide. Les critères (en rouge) sont en haut du tableau uniquement.Les produits (en bleu), c'est-à-dire le choix que devra faire le participant se trouve dans la première colonne du tableau. Les cases (en jaune) forment le reste du tableau et forment une association entre un critère et un produit.
+    </p>
+    
+    <h3 class="titre">Les sessions</h3>
+    
+    <p>
+    Les sessions sont générées aléatoirement à partir d'une campagne. Les produits et les criteres seront placés aléatoirement pour creer le tableau. Les cases étant des
+    associations, la session est construite sur ce principe. Vous pourrez participer à une session en allant dans l'onglet "participer à une session". Pour le moment,
+    l'inviation à une session n'est pas disponible. Vous pourrez toutefois copier le lien de la session. Le numéro de la session figure au bout du lien. le participant
+    recevant la session pourra alors compléter celle-ci
+    </p>
+    
+    <h3 class="titre">Les chemins de réalisation</h3>
+    
+    <p>
+    Les chemins de résolutions sont disponibles dans l'onglet banque de données. Vous pourrez retrouver les sessions par leurs numéros, elles sont triées par campagne.
+    </p>
 
 </div>
 </body>
