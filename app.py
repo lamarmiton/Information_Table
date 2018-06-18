@@ -119,7 +119,30 @@ def session(campagneId):
         print "Error 404 : file not found"
         pass
 
+# =================================== Remove Campagne ========================================================
+# ============================================================================================================
+
+@app.route('/Delete/<int:campagneid>/', methods=["GET", "POST"])
+def delete(campagneid):
     
+    #Ecriture des requetes de supression
+    removeSession = 'DELETE FROM session WHERE campagneid = '+str(campagneid)+';'
+    removeCampagne = 'DELETE FROM campagne WHERE id = '+str(campagneid)+';'
+
+    #Exécution de la requete et récupération du résultat
+    con = sqlite3.connect(str(DB_PATH + "DbLigth.db"))
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    cur.execute(removeSession)
+    cur.execute(removeCampagne)
+
+    #Enregistrement des changements dans la base de donnée
+    con.commit()
+
+    #Fermeture de la base de donnée  
+    con.close()
+
+    return self.campagne()
 
 # =================================== Affichage des sessions =================================================
 # ============================================================================================================
