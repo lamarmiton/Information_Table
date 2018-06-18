@@ -142,7 +142,7 @@ def delete(campagneid):
     #Fermeture de la base de donnée  
     con.close()
 
-    return self.campagne()
+    return campagne()
 
 # =================================== Affichage des sessions =================================================
 # ============================================================================================================
