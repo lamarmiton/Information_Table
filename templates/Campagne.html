@@ -18,7 +18,7 @@
 				<td>{{row["id"]}}</td>
 				{#L'id de la campagne selectionée est passé par la fonction url_for #}
 				<td><a href={{ url_for('session',campagneId = row["id"])}}>{{row["nom"]}}</td>
-				<td><a href={{ url_for('delete',campagneid = row["id"])}} ><button type="button" class="btn btn-primary" style = "width: 100px" > Remove </button> </td>
+				<td><a href={{ url_for('delete',campagneid = row["id"])}} ><button type="button" class="btn btn-danger" style = "width: 100px" > Remove </button> </td>
 				</tr>
 				{% endfor %}
 			</tbody>       
