@@ -122,7 +122,7 @@ def session(campagneId):
 # =================================== Remove Campagne ========================================================
 # ============================================================================================================
 
-@app.route('/Delete/<int:campagneid>/', methods=["DEL"])
+@app.route('/Delete/<int:campagneid>/', methods=["DELETE"])
 def delete(campagneid):
     
     #Ecriture des requetes de supression
