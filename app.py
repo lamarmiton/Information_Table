@@ -75,12 +75,12 @@ def campagne():
 
 #Page de la session : La complétion de l'étude par un répondant
 #La creation de la session est lié à la campagne (Retrouvée par son id)
-#La session est généré aléatoirement via le fichier CSV de la campagne
+#La session est généré aléatoirement via le fichier Excel de la campagne
 @app.route('/Session/<int:campagneId>/', methods=["GET", "POST"])
 def session(campagneId):
     try : 
 
-        # Récupération du chemin d'accés vers le fichier CSV de la campagne
+        # Récupération du chemin d'accés vers le fichier Excel de la campagne
         request = 'SELECT Pathfile FROM campagne WHERE id = '+str(campagneId)+';'
 
         #Recuperation du nom de la campagne 
@@ -122,7 +122,7 @@ def session(campagneId):
 # =================================== Remove Campagne ========================================================
 # ============================================================================================================
 
-@app.route('/Delete/<int:campagneid>/', methods=["GET", "POST"])
+@app.route('/Delete/<int:campagneid>/', methods=["DEL"])
 def delete(campagneid):
     
     #Ecriture des requetes de supression
