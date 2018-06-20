@@ -8,6 +8,7 @@ import pprint as pp
 import json
 import os
 import sys
+import shutil
 
 #IMPORT DU REPERTOIRE DE SCRIPT PYTHON
 sys.path.insert(1,'script/')
@@ -41,7 +42,7 @@ def allowed_file(filename):
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
 
-# =================================== Index ==============================pp====================================
+# =================================== Index ==================================================================
 # ============================================================================================================
 
 # ROUTES    
@@ -122,6 +123,7 @@ def session(campagneId):
 # =================================== Remove Campagne ========================================================
 # ============================================================================================================
 
+#Supression de la campagne : Balayage et ménage des fichiers liés à celle-ci
 @app.route('/Delete/<int:campagneid>/', methods=["DELETE","GET"])
 def delete(campagneid):
     
@@ -129,10 +131,29 @@ def delete(campagneid):
     removeSession = 'DELETE FROM session WHERE campagneid = '+str(campagneid)+';'
     removeCampagne = 'DELETE FROM campagne WHERE id = '+str(campagneid)+';'
 
+    #Recupération du fichier Excel a supprimer
+    getExcel = 'SELECT Pathfile FROM campagne WHERE id = '+str(campagneid)+';'
+
     #Exécution de la requete et récupération du résultat
     con = sqlite3.connect(str(DB_PATH + "DbLigth.db"))
     con.row_factory = sqlite3.Row
     cur = con.cursor()
+
+
+    #Suppression des chemins de résolutions pour les sessions liées à la campagne. Les chemins sont stockés
+    #dans les dossiers du repertoire Session portant le numéro de la campagne
+    shutil.rmtree(UPLOAD_FOLDER+'/Session/'+str(campagneid))
+
+    #Suppression des fichiers et dossiers liés aux campagnes
+    cur.execute(getExcel)
+    os.remove(cur.fetchone()[0])
+
+    #Suppression du stockage des images et du fichier Drawning1.xml, si il y a des images
+    if os.path.exists('static/img/Campagne_'+str(campagneid)):
+        shutil.rmtree('static/img/Campagne_'+str(campagneid))
+
+
+    #Supression de la campagne et des sessions de la base de donnée
     cur.execute(removeSession)
     cur.execute(removeCampagne)
 
@@ -142,6 +163,7 @@ def delete(campagneid):
     #Fermeture de la base de donnée  
     con.close()
 
+    #Rechargement de la page
     return campagne()
 
 # =================================== Affichage des sessions =================================================
@@ -152,7 +174,7 @@ def banque():
 
     # Construction des requetes : Recupération des campagnes et des sessions
     requestCampagne = "SELECT DISTINCT * FROM campagne;"
-    requestSession = " SELECT DISTINCT * FROM session;"
+    requestSession = "SELECT DISTINCT * FROM session;"
 
     # Exécution de la requete et récupération des résultats
     # On souhaite afficher toutes les campagnes
@@ -366,7 +388,7 @@ def submit_handler():
 class RegistrationForm(Form):
     nom = StringField('Nom', [validators.Length(min=4, max=25)])
     countdown = StringField('countdown')
-
+    
 # MAIN 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

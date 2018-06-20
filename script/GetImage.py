@@ -51,16 +51,20 @@ class Image:
 
 
 def imageDansExcel(xlsxFile, idCampagne):
+	ImageTable = []
+
 	Archive = zipfile.ZipFile(xlsxFile)
 	ImageFiles = sorted([Archive.extract(F,PATH_IMAGE+str(idCampagne)) for F in Archive.namelist() if F.count('.jpg') or F.count('.jpeg')])
-	DrawingXML = [Archive.extract(xml,PATH_IMAGE+str(idCampagne)) for xml in Archive.namelist() if xml.count('drawings/drawing1.xml')][0]
+	DrawingXML = [Archive.extract(xml,PATH_IMAGE+str(idCampagne)) for xml in Archive.namelist() if xml.count('drawings/drawing1.xml')]
 
-	# Application de la regex, nous souhaitons récuperer les valeurs dans les balises <xdr:col> et <xdr:row>
-	coordCol = [re.compile("(?<=<xdr:col>).*?(?=<\/xdr:col>)").findall(elem) for elem in open(DrawingXML) if elem != None ][1]
-	coordLig = [re.compile("(?<=<xdr:row>).*?(?=<\/xdr:row>)").findall(elem) for elem in open(DrawingXML) if elem != None ][1]
+	if DrawingXML != []:
+		# Application de la regex, nous souhaitons récuperer les valeurs dans les balises <xdr:col> et <xdr:row>
+		coordCol = [re.compile("(?<=<xdr:col>).*?(?=<\/xdr:col>)").findall(elem) for elem in open(DrawingXML[0]) if elem != None ][1]
+		coordLig = [re.compile("(?<=<xdr:row>).*?(?=<\/xdr:row>)").findall(elem) for elem in open(DrawingXML[0]) if elem != None ][1]
+		ImageTable = [Image(coordCol[i*2],coordLig[i*2],ImageFiles[i]) for i in range(len(ImageFiles))]
 
 	# Retour de la liste des images
-	return [Image(coordCol[i*2],coordLig[i*2],ImageFiles[i]) for i in range(len(ImageFiles))]
+	return ImageTable
 
 #======================================================= TEST ==================================================================================
 
