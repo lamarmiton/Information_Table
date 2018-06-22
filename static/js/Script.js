@@ -1,9 +1,11 @@
 /*							 VARIABLES GLOBALES									*/
 /*		===================================================================		*/
 
-var VALUES = [];
 var COMPTEUR = [];
-var COORDONNE = [];
+var ASSLIG = [];
+var ASSCOL = [];
+var COORD =[ ];
+
 
 var STARTIME = new Date();
 var GLOBALTIME = new Date();
@@ -26,10 +28,6 @@ function showCase(elmnt) {
 
 	setTimeout( function () { elmnt.parentElement.children[1].style.display ="block" } , 200);
 
-	VALUES.push(elmnt.parentElement.children[1].firstElementChild.attributes.alt.nodeValue)
-	
-	console.log()
-
 	
 	// Récupération de l'association en ligne
 	assLig = unescape(decodeURIComponent(elmnt.parentElement.parentElement.children[0].innerText));
@@ -42,11 +40,11 @@ function showCase(elmnt) {
 	coordCol = elmnt.parentElement.cellIndex;
 	// Coordonné en ligne
 	coordLig = elmnt.parentElement.parentElement.rowIndex;
-
-	// Construction de l'objet coordonnees
-	var coordonnes = " [ "+assLig+" / "+assCol+" ] || [   Ligne : "+coordLig+" Colonne : "+coordCol+" ] "
 	
-	COORDONNE.push(coordonnes)
+	ASSLIG.push(assLig)
+	ASSCOL.push(assCol)
+	COORD.push(coordCol+":"+coordLig)
+
 };
 
 // Fonction de zoom sur une info révélée
@@ -63,9 +61,9 @@ function ValideSession (elmnt) {
 
 	chemin = { "FinalChoice" : unescape(decodeURIComponent(elmnt)), "SessionName" : window.location.pathname, "Chemin" : [] }
   	index = 0
-	VALUES.forEach(function(value){
+	ASSLIG.forEach(function(value){
 
-		var chainon = { "Nb": index+1, "Value" :value, "Compteur" : COMPTEUR[index], "Coords" : COORDONNE[index] }
+		var chainon = { "Nb": index+1, "Compteur" : COMPTEUR[index], "AssLig" : ASSLIG[index],"AssCol" : ASSCOL[index],"Coords" : COORD[index]}
 		chemin.Chemin.push(chainon)
 		++index	
 	})
@@ -106,8 +104,12 @@ $(".hideInfo").click(function(){
 	setTimeout(function () {
 
     console.log(" Liste des compteurs :  "+ COMPTEUR )
-    console.log(" VALUES actuel :  "+ VALUES )
-    console.log(" coordonnés actuels :  "+ COORDONNE )
+    console.log(" Coordonnés actuels :  "+COORD)
+    console.log(" Association colonne :  "+ASSCOL)
+    console.log(" Association ligne :  "+ASSLIG)
+    
+	
+
 
 	}, 500)
 
@@ -127,34 +129,37 @@ $(".alternative").click(function(){
 	- GLobaltime est la date d'ouverture de la session
 	- Le temps est déterminé à la création de la campagne
 	- Les 10 dernieres secondes ont pour but d'etre anxiogène
+	- Temps infini lorsque l'administrateur tape 00
 */
 
 var interval = setInterval(function() {
 
-	if ( COUNTDOWN != 0 ) {
+	if ( document.body.children[5].innerText != "00") {
 
-	    if (Math.round(COUNTDOWN) < 10){
-	    	COUNTDOWN = (TIMER - (new Date() - GLOBALTIME)/1000).toFixed(2);
-	    	document.body.children[5].innerText = COUNTDOWN;
-	    	document.body.children[5].style.color="red";
-	    	document.body.children[5].style.fontSize = "25px";
-	    }
+		if ( COUNTDOWN != 0 ) {
 
-		else{
-			COUNTDOWN = Math.round(TIMER - (new Date() - GLOBALTIME)/1000);
-	    	document.body.children[5].innerText = COUNTDOWN
-	    	document.body.children[5].style.fontSize = "20px";
-	    }
+		    if (Math.round(COUNTDOWN) < 10){
+		    	COUNTDOWN = (TIMER - (new Date() - GLOBALTIME)/1000).toFixed(2);
+		    	document.body.children[5].innerText = COUNTDOWN;
+		    	document.body.children[5].style.color="red";
+		    	document.body.children[5].style.fontSize = "25px";
+		    }
 
+			else{
+				COUNTDOWN = Math.round(TIMER - (new Date() - GLOBALTIME)/1000);
+		    	document.body.children[5].innerText = COUNTDOWN
+		    	document.body.children[5].style.fontSize = "20px";
+		    }
+
+		}
+
+	    if ( COUNTDOWN ==  0.10 ){
+	    	COUNTDOWN = 0
+	    	document.body.children[5].innerText = 0
+			ValideSession("Time out !");
+
+		}
 	}
-
-    if ( COUNTDOWN ==  0.10 ){
-    	COUNTDOWN = 0
-    	document.body.children[5].innerText = 0
-		ValideSession("Time out !");
-
-	}
-
 
 }, 1);
 

@@ -9,11 +9,12 @@ import json
 import os
 import sys
 import shutil
+import binascii
 
 #IMPORT DU REPERTOIRE DE SCRIPT PYTHON
 sys.path.insert(1,'script/')
 from tableIB import parseExcel
-from jsonParsing import jsonParsing, jsonToExcel    
+from jsonParsing import jsonParsing, jsonToExcel, buildIndic    
 
 #ENCODAGE UTF8
 reload(sys)
@@ -142,7 +143,8 @@ def delete(campagneid):
 
     #Suppression des chemins de résolutions pour les sessions liées à la campagne. Les chemins sont stockés
     #dans les dossiers du repertoire Session portant le numéro de la campagne
-    shutil.rmtree(UPLOAD_FOLDER+'/Session/'+str(campagneid))
+    if os.path.exists(UPLOAD_FOLDER+'/Session/'+str(campagneid)):
+        shutil.rmtree(UPLOAD_FOLDER+'/Session/'+str(campagneid))
 
     #Suppression des fichiers et dossiers liés aux campagnes
     cur.execute(getExcel)
@@ -197,8 +199,8 @@ def banque():
 # =================================== Affichage du chemin de la session ======================================
 # ============================================================================================================
 
-@app.route('/Chemin/<int:sessionid>/', methods=["GET", "POST"])
-def chemin(sessionid):
+@app.route('/Chemin/<int:campagneid>/<int:sessionid>/', methods=["GET", "POST"])
+def chemin(sessionid,campagneid):
     try : 
 
         #Recuperation information de la session
@@ -216,11 +218,12 @@ def chemin(sessionid):
         #Fermeture de la base de donnée  
         con.close()
 
-        #Construction du tableau grâce au script python tableIDB.python
-        #Le tableau[-1] signifie que l'on prendra toujours le dernier tableau créé
         rows = jsonParsing(chemin)
 
-        return render_template("Chemin.html",rows = rows, sessionid = sessionid)  
+        #La fonction buildIndic récupere le tableau des données, et construit des indicateurs avec.
+        indics = buildIndic(rows)
+
+        return render_template("Chemin.html",rows = rows, indics = indics, sessionid = sessionid,campagneid = campagneid)  
 
     except IOError : 
 
@@ -230,8 +233,9 @@ def chemin(sessionid):
 # =================================== Téléchargement du chemin format Excel ==================================
 # ============================================================================================================
 
-@app.route('/download/<int:sessionid>/', methods=["GET", "POST"])
-def download(sessionid):
+@app.route('/download/<int:campagneid>/<int:sessionid>/', methods=["GET", "POST"])
+def download(campagneid,sessionid):
+    
     #Recuperation information de la session
     requestSession = 'SELECT chemin FROM session WHERE sessionid = '+str(sessionid)+';'
 
@@ -242,17 +246,21 @@ def download(sessionid):
     cur.execute(requestSession)
 
     #Récupération du chemin d'accés vers le fichier Excel
-    cheminJson = cur.fetchone()[0]
-    
-    #Fermeture de la base de donnée  
-    con.close()
+    chemin = cur.fetchone()[0]
 
-    cheminExcel = cheminJson[:-5:]+".xlsx"
+    #Le tableau[-1] signifie que l'on prendra toujours le dernier tableau créé
+    rows = jsonParsing(chemin)
 
-    with open(cheminExcel,'w') as outfile:
-        jsonToExcel(cheminJson,cheminExcel)
-    
-    return send_file(cheminExcel,"Chemin_"+str(sessionid),as_attachment=True)
+    #La fonction buildIndic récupere le tableau des données, et construit des indicateurs avec.
+    indics = buildIndic(rows)
+
+    #Création du path du fichier excel de chemin stocké
+    excelPath = UPLOAD_FOLDER+'/Session/'+str(campagneid)+'/'+binascii.hexlify(os.urandom(16))+'.xlsx'
+    file = open(excelPath,'w')
+    with file as outfile:
+        jsonToExcel(rows,indics,campagneid,excelPath)
+
+    return send_file(excelPath,"Chemin_"+str(sessionid),as_attachment=True)
 
 
 # =================================== Envoit invitation ======================================================
@@ -272,11 +280,13 @@ def upload_file():
 
     form = RegistrationForm(request.form) 
     if request.method == 'POST':
+
     # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
+
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
@@ -285,8 +295,10 @@ def upload_file():
 
         #Si tout se passe bien : Alors on upload le fichier, et on peuple la base de donnée
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            #Le nom du fichier est identifiant aleatoire
+            filename = binascii.hexlify(os.urandom(16))
+            file.save(os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename))
 
             # Peuplement de la base de donnée avec les données saisies par l'utilisateur
             con = sqlite3.connect(str(DB_PATH + "DbLigth.db"))
@@ -298,7 +310,7 @@ def upload_file():
             #Creation de la table
             cur.execute(create_sql)
 
-            requestInsert = 'INSERT INTO campagne (nom, Pathfile,countdown) VALUES (\"'+form.nom.data+'\",\"'+os.path.join(app.config['UPLOAD_FOLDER'], filename)+'\",'+form.countdown.data+');'
+            requestInsert = 'INSERT INTO campagne (nom, Pathfile,countdown) VALUES (\"'+form.nom.data+'\",\"'+os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename)+'\",'+form.countdown.data+');'
             print "Execution de la requête : " + requestInsert
             cur.execute(requestInsert)
 

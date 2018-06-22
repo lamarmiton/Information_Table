@@ -4,41 +4,63 @@
 
 <div class="container">
 
-<h1 class="titre"> Banque de données </h1>
+	<h1 class="titre"> Banque de données </h1>
 	
 	<h3 class="titre">Choix final : {{ rows["FinalChoice"] }}</h3>
 
-			<table class="table table-striped">
-				<thead class="thead-dark">
-      				<tr>
-      					<th>#										</th>
-        				<th class="col" > Compteur 					</th>
-        				<th class="col" > Coordonés des cliques		</th>
-        				<th class="col" > Valeur de la case			</th>
-      				</tr>	
+	<table class="table table-striped">
+		<thead class="thead-dark">
+			<tr>
+				<th>#										</th>
+				<th class="col" > Temps passé				</th>
+				<th class="col" > Coordonées				</th>
+				<th class="col" > Association en Ligne		</th>
+				<th class="col" > Association en colonne	</th>
+			</tr>	
+
+			<tbody>
+
+				{% for row in rows["Chemin"] %}
+				<tr>
+
+					<td>{{ row["Nb"]       }} 	</td>
+					<td>{{ row["Compteur"] }} ms</td>
+					<td>{{ row["Coords"]   }} 	</td>
+					<td>{{ row["AssLig"]   }}   </td>
+					<td>{{ row["AssCol"]   }}   </td>
+
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<h4 class="titre"> Indicateurs : </h4>
+
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<tr>
+					<th>Temps passé en moyenne par case			</th>
+					<th>Temps passé total						</th>
+				</tr>	
 
 				<tbody>
 
-					{% for row in rows["Chemin"] %}
 					<tr>
 
-						<td>{{ row["Nb"]       }} 	</td>
-						<td>{{ row["Compteur"] }} ms</td>
-						<td>{{ row["Coords"]   }} 	</td>
-						<td><img src= "{{url_for('static',filename=row["Value"])}}"  width = 100 height= 75  alt = " {{ row["Value"]  }} "></td>
+						<td>{{ indics["Moyenne"]  }} ms	</td>
+						<td>{{ indics["Somme"]    }} ms	</td>
 
 					</tr>
-					{% endfor %}
 				</tbody>
 			</table>
 
 
 
-			<a href={{ url_for('download',sessionid = sessionid )}} >
-			<button type="button" class="btn btn-success" style = "float: right;width: 200px; height: 50px; margin-top: 50px;" > Télécharger le chemin </button>
+			<a href={{ url_for('download',campagneid = campagneid,sessionid = sessionid)}} >
+				<button type="button" class="btn btn-success" style = "float: right;width: 200px; height: 50px; margin-top: 50px;" > Télécharger le chemin </button>
 			</a>
-</div>
-  </body>
+		</div>
+	</body>
 
 
-</html>
+	</html>

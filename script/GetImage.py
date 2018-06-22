@@ -57,6 +57,7 @@ def imageDansExcel(xlsxFile, idCampagne):
 	ImageFiles = sorted([Archive.extract(F,PATH_IMAGE+str(idCampagne)) for F in Archive.namelist() if F.count('.jpg') or F.count('.jpeg')])
 	DrawingXML = [Archive.extract(xml,PATH_IMAGE+str(idCampagne)) for xml in Archive.namelist() if xml.count('drawings/drawing1.xml')]
 
+	#Si le fichier Excel posséde des images, alors il y a le fichier Drawning1.xml présent dans l'archive excel. Sinon, on renvoit un tableau vide
 	if DrawingXML != []:
 		# Application de la regex, nous souhaitons récuperer les valeurs dans les balises <xdr:col> et <xdr:row>
 		coordCol = [re.compile("(?<=<xdr:col>).*?(?=<\/xdr:col>)").findall(elem) for elem in open(DrawingXML[0]) if elem != None ][1]

@@ -18,7 +18,7 @@
 
 						{% if session["campagneid"] == campagne["id"]%}
 						<li> Session : {{ session["sessionid"] }} </li>
-						<p> <a href={{ url_for('chemin',sessionid = session["sessionid"])}} > Chemin de la session </a> </p>
+						<p> <a href={{ url_for('chemin',sessionid = session["sessionid"],campagneid = campagne["id"])}} > Chemin de la session </a> </p>
 						{% endif %}
 
 					{% endfor %}

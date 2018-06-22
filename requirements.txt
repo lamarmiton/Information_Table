@@ -3,3 +3,4 @@ wtforms
 pandas
 xlrd
 openpyxl
+statistics
