@@ -14,7 +14,7 @@ import binascii
 #IMPORT DU REPERTOIRE DE SCRIPT PYTHON
 sys.path.insert(1,'script/')
 from tableIB import parseExcel
-from jsonParsing import jsonParsing, jsonToExcel, buildIndic    
+from jsonParsing import jsonParsing, jsonToExcel, buildIndic,jsonToExcelAll 
 
 #ENCODAGE UTF8
 reload(sys)
@@ -235,7 +235,6 @@ def chemin(sessionid,campagneid):
 
 @app.route('/download/<int:campagneid>/<int:sessionid>/', methods=["GET", "POST"])
 def download(campagneid,sessionid):
-    
     #Recuperation information de la session
     requestSession = 'SELECT chemin FROM session WHERE sessionid = '+str(sessionid)+';'
 
@@ -256,11 +255,40 @@ def download(campagneid,sessionid):
 
     #Création du path du fichier excel de chemin stocké
     excelPath = UPLOAD_FOLDER+'/Session/'+str(campagneid)+'/'+binascii.hexlify(os.urandom(16))+'.xlsx'
-    file = open(excelPath,'w')
-    with file as outfile:
+
+    with open(excelPath,'w') as outfile:
         jsonToExcel(rows,indics,campagneid,excelPath)
 
     return send_file(excelPath,"Chemin_"+str(sessionid),as_attachment=True)
+
+
+# =================================== Téléchargement de tous les participants à une campagne =================
+# ============================================================================================================
+
+@app.route('/downloadUser/<int:campagneid>', methods=["GET", "POST"])
+def downloadUser(campagneid):
+    #Recuperation information de la session
+    requestSession = 'SELECT chemin FROM session WHERE campagneid = '+str(campagneid)+';'
+
+    #Exécution de la requete et récupération du résultat
+    con = sqlite3.connect(str(DB_PATH + "DbLigth.db"))
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    cur.execute(requestSession)
+
+    #Le tableau[-1] signifie que l'on prendra toujours le dernier tableau créé
+    rows = [jsonParsing(user[0]) for user in cur.fetchall()]
+
+    #La fonction buildIndic récupere le tableau des données, et construit des indicateurs avec.
+    indics = [buildIndic(indic) for indic in rows]
+
+    #Création du path du fichier excel de chemin stocké
+    excelPath = UPLOAD_FOLDER+'/Session/'+str(campagneid)+'/'+"Campagne_"+str(campagneid)+'.xlsx'
+
+    with open(excelPath,'w') as outfile:
+        jsonToExcelAll(rows,indics,campagneid,excelPath)
+
+    return send_file(excelPath,"Campagne_"+str(campagneid),as_attachment=True)
 
 
 # =================================== Envoit invitation ======================================================
