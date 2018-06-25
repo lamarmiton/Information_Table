@@ -326,6 +326,11 @@ def upload_file():
 
             #Le nom du fichier est identifiant aleatoire
             filename = binascii.hexlify(os.urandom(16))
+            
+            #Si les repertoires n'existent pas alors il sont créés
+            if not os.path.exists(UPLOAD_FOLDER+"/ExcelFile"):
+                os.makedirs(UPLOAD_FOLDER+"/ExcelFile")
+        
             file.save(os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename))
 
             # Peuplement de la base de donnée avec les données saisies par l'utilisateur
