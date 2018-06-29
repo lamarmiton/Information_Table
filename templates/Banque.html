@@ -17,11 +17,12 @@
 					<a href={{ url_for('downloadUser',campagneid = campagne["id"] ) }} >
 					<button type="button" class="btn btn-info" style = "float: right;width: 200px; height: 50px; margin-top: 50px;display:inline-block;" > Télécharger les chemins </button>
 					</a>
-					{% for session in rowsSession %}
+					{% for Chemin in rowsChemin %}
 
-						{% if session["campagneid"] == campagne["id"]%}
-						<li> Session : {{ session["sessionid"] }} </li>
-						<p> <a href={{ url_for('chemin',sessionid = session["sessionid"],campagneid = campagne["id"])}} > Chemin de la session </a> </p>
+						{% if Chemin["campagneid"] == campagne["id"]%}
+						
+						<li> Chemin n°{{ Chemin["cheminid"] }} de la session : {{ Chemin["SessionName"] }} </li>
+						<p> <a href={{ url_for('chemin',cheminid = Chemin["cheminid"],campagneid = campagne["id"])}} > Chemin de la Chemin </a> </p>
 						{% endif %}
 
 					{% endfor %}

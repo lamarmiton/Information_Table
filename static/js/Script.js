@@ -20,6 +20,26 @@ var TIMER = Number(document.body.children[5].innerText)
 // Effet de flou pour avoir une transition sympa
 function showCase(elmnt) {
 
+
+
+	/*                 Affiche toutes les div servant à cacher l'information */
+	var elements = document.getElementsByClassName("hideInfo")
+
+    for (var i = 0; i < elements.length; i++){
+        elements[i].style.display = "block";
+        elements[i].style.filter = "none";
+
+    }
+
+    /*                  Cache les infos                     */
+   	var elements = document.getElementsByClassName("info")
+
+    for (var i = 0; i < elements.length; i++){
+        elements[i].style.display = "none";
+
+    }
+
+
 	elmnt.style.filter = 'blur(40px)';
    	elmnt.style.transition = 'all 0.5s ease-out';
 
@@ -44,6 +64,8 @@ function showCase(elmnt) {
 	ASSLIG.push(assLig)
 	ASSCOL.push(assCol)
 	COORD.push(coordCol+":"+coordLig)
+
+	
 
 };
 

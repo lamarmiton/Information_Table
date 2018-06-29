@@ -1,4 +1,22 @@
 {% include 'Includes/header.html' %}
-  </body>
+{% from "_formhelpers.html" import render_field %}
+
+</body>
+
+<title>Creation de campagne</title>
+<div class="container">
+	<h1 class="titre">Invitation à une session</h1>
+
+	<form method=post enctype=multipart/form-data>
+		<dl>
+			{{ render_field(form.sessionName) }}
+			<br>
+			{{ render_field(form.campagne) }}
+		</dl>
+
+		<p><input type=submit value=Confirmer>
+	</form>
+</div>
+
 
 </html>

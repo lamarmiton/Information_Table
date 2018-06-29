@@ -1,0 +1,15 @@
+{% include 'Includes/header.html' %}
+{% from "_formhelpers.html" import render_field %}
+
+</body>
+
+<title>Creation de campagne</title>
+<div class="container">
+	<h1 class="titre">Lien vers la session</h1>
+
+	<div class = "well well-lg"> <a href = {{ url_for('session',sessionid = sessionid ) }} > <p> /Session/{{ sessionid }} </p> </a>
+	
+</div>
+
+
+</html>

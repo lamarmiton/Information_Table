@@ -40,8 +40,7 @@ table{
 <div class="timer well well-lg" style="float : left ; margin-left: 15px; margin-top:4%; margin-left: 5%;"><p style="text-align: center"> {{ countdown }}</p></div>
 <div class="container">
 
-  <h1 class="titre"> Session de {{ SessionName }} : {{ name }} </h1>
-
+  <h1 class="titre"> Session : {{ name }} </h1>
   <table class="table">
 
     {# Affichage des criteres #}
@@ -77,12 +76,11 @@ table{
 
       <tr>
 
-        <td class = "alternative" > <button type="button" class="btn btn-primary" style = "width: 100px" > {{ row }}  </button> </td>
+        <td class = "alternative" > {{ row }}  </button> </td>
 
         {%                 for case in rows[row]          %}
-        <td class = "case" style="width:20%; height:150px">
-        <div class = "hideInfo" onclick="showCase(this)"> <img  src = "{{ url_for('static', filename = 'img/icons/hide.jpeg' ) }}"  width = 60 height= 60> </div>
-        <div class = "info" onclick="zoomIn(this)" style = "display: none"> <img src= "{{ url_for('static',filename = case ) }}"  width = 150 height= 100  alt = "{{case}}">   </div>
+        <td>
+        <div class = "info" onclick="zoomIn(this)"> <img src= "{{ url_for('static',filename = case ) }}"  width = 150 height= 100  alt = "{{case}}">   </div>
         </td>
         {%                        endfor                  %}
 
@@ -99,7 +97,5 @@ table{
 
 </body>
 <!-- Script comportemental de la page -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="/static/js/Script.js"></script>
 <script src="/static/js/zoom.js"></script>
 </html>

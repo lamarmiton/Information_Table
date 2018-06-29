@@ -1,0 +1,41 @@
+{% include 'Includes/header.html' %}
+
+<title>Sessions disponibles</title>
+
+<div class="container">
+
+<h1 class="titre" style = "padding-bottom: 2%;"> Sessions disponibles </h1>
+
+
+	<div id="accordion">
+
+			{% for campagne in rowsCampagne %}
+
+				<h3>{{campagne["nom"]}}</h3>
+
+				<div>
+					{% for Session in rowsSession %}
+
+						{% if Session["campagneid"] == campagne["id"]%}
+						<li> Session : {{ Session["SessionName"] }} </li>
+						<p> <a href={{ url_for('session',sessionid = Session["id"])}} > http://informationtable-tableinformation.7e14.starter-us-west-2.openshiftapps.com/Session/{{ Session["id"] }} </a> </p>
+						{% endif %}
+
+					{% endfor %}
+				</div>
+			{% endfor %}	
+      
+			
+	</div>
+</div>
+  </body>
+
+
+<!-- SCRIPT ET RESSOURCES -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script> $( function() { $( "#accordion" ).accordion(); } ); </script>
+
+</html>
