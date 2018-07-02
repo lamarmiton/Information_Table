@@ -75,7 +75,7 @@ def detailCampagne(campagneid):
 
     #Construction du tableau grâce au script python tableIDB.python
     #Le tableau[-1] signifie que l'on prendra toujours le dernier tableau créé
-    rows = parseExcel(str(chemin),campagneid).tableau[0].dic
+    rows = parseExcel(str(chemin),campagneid).tableau[-1].dic
 
     return render_template("InformationBoard.html",rows = rows, name = name, countdown = countdown)  
 
@@ -196,7 +196,7 @@ def download(campagneid,cheminid):
     indics = buildIndic(rows)
 
     #Création du path du fichier excel de chemin stocké
-    excelPath = UPLOAD_FOLDER+'/Campagne/'+str(campagneid)+'/'+binascii.hexlify(os.urandom(16))+'.xlsx'
+    excelPath = UPLOAD_FOLDER+'/Session/'+str(campagneid)+'/'+binascii.hexlify(os.urandom(16))+'.xlsx'
 
     with open(excelPath,'w') as outfile:
         jsonToExcel(rows,indics,campagneid,excelPath)
@@ -217,7 +217,7 @@ def downloadUser(campagneid):
     indics = [buildIndic(indic) for indic in rows]
 
     #Création du path du fichier excel de chemin stocké
-    excelPath = UPLOAD_FOLDER+'/Campagne/'+str(campagneid)+'/'+"Campagne_"+str(campagneid)+'.xlsx'
+    excelPath = UPLOAD_FOLDER+'/Session/'+str(campagneid)+'/'+"Campagne_"+str(campagneid)+'.xlsx'
 
     with open(excelPath,'w') as outfile:
         jsonToExcelAll(rows,indics,campagneid,excelPath)
