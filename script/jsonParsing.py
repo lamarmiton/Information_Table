@@ -37,7 +37,7 @@ def jsonToExcel(rows,indics,campagneid,excelPath):
 
 
 # Récupération des informations des chemins de TOUS LES PARTICIPANTS. Ecriture d'un fichier Excel à télécharger vers le client.
-def jsonToExcelAll(rows,indics,campagneid,excelPath):
+def jsonToExcelAll(rows,indics,campagneid,excelPath,SessionNames):
 
 	writer = pd.ExcelWriter(excelPath)
 
@@ -46,7 +46,7 @@ def jsonToExcelAll(rows,indics,campagneid,excelPath):
 	for user in range(len(rows)):
 
 		#Id de la session 
-		pd.DataFrame({'Session' :  rows[user]['SessionName'] },index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=0)
+		pd.DataFrame({'Session' :  SessionNames[user] }).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=0)
 		
 		#Chemin en coordonnée :
 		pd.DataFrame({'Coords' : formatStr(str([ rows[user]['Chemin'][i]['Coords'] for i in range(len(rows[user]['Chemin'])) ])).encode("utf-8")},index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=1)

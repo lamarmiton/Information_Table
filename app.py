@@ -213,6 +213,9 @@ def downloadUser(campagneid):
     #Le tableau[-1] signifie que l'on prendra toujours le dernier tableau créé
     rows = [jsonParsing(user[0]) for user in req.selectFromTable("chemin","Chemin","campagneid ="+str(campagneid)).fetchall()]
 
+    #Liste des noms des participants à la campagne
+    SessionNames = [user for user in req.selectFromTable("SessionName","Chemin","campagneid ="+str(campagneid)).fetchall()]
+
     #La fonction buildIndic récupere le tableau des données, et construit des indicateurs avec.
     indics = [buildIndic(indic) for indic in rows]
 
@@ -220,7 +223,7 @@ def downloadUser(campagneid):
     excelPath = UPLOAD_FOLDER+'/Session/'+str(campagneid)+'/'+"Campagne_"+str(campagneid)+'.xlsx'
 
     with open(excelPath,'w') as outfile:
-        jsonToExcelAll(rows,indics,campagneid,excelPath)
+        jsonToExcelAll(rows,indics,campagneid,excelPath,SessionNames)
 
     return send_file(excelPath,"Campagne_"+str(campagneid),as_attachment=True)
 
@@ -313,7 +316,7 @@ def submit_handler():
     #Le fichier JSON est enregistré dans un dictionnaire python
     dict_json = jsonParsing(app.config['UPLOAD_FOLDER']+'/data.json')
 
-
+    
     #Le numéro de la campagne est retrouvé par une regex sur le nom de la session :
     #De la forme pa exemple : Session/1/ : On ne recherche que les digits ici
     sessionid = re.search(r'\d+', dict_json['SessionName']).group()
