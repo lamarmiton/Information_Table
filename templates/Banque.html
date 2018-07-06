@@ -4,42 +4,42 @@
 
 <div class="container">
 
-<h1 class="titre" style = "padding-bottom: 2%;"> Banque de données </h1>
+	<h1 class="titre" style = "padding-bottom: 2%;"> Chemins de résolution </h1>
 
 
 	<div id="accordion">
 
-			{% for campagne in rowsCampagne %}
+		{% for campagne in rowsCampagne %}
 
-				<h3>{{campagne["nom"]}}</h3>
+		<h3>{{campagne["nom"]}}</h3>
 
-				<div>
-					<a href={{ url_for('downloadUser',campagneid = campagne["id"] ) }} >
-					<button type="button" class="btn btn-info" style = "float: right;width: 200px; height: 50px; margin-top: 50px;display:inline-block;" > Télécharger les chemins </button>
-					</a>
-					{% for Chemin in rowsChemin %}
+		<div>
+			<a href={{ url_for('downloadUser',campagneid = campagne["id"] ) }} >
+				<button type="button" class="btn btn-info" style = "float: right;width: 200px; height: 50px; margin-top: 50px;display:inline-block;" > Télécharger l'ensemble </button>
+			</a>
+			{% for Chemin in rowsChemin %}
 
-						{% if Chemin["campagneid"] == campagne["id"]%}
-						
-						<li> Chemin n°{{ Chemin["cheminid"] }} de la session : {{ Chemin["SessionName"] }} </li>
-						<p> <a href={{ url_for('chemin',cheminid = Chemin["cheminid"],campagneid = campagne["id"])}} > Chemin de la Chemin </a> </p>
-						{% endif %}
+			{% if Chemin["campagneid"] == campagne["id"]%}
 
-					{% endfor %}
-				</div>
-			{% endfor %}	
-      
-			
+			<li> Chemin n°{{ Chemin["cheminid"] }} de la session : {{ Chemin["SessionName"] }} </li>
+			<p> <a href={{ url_for('chemin',cheminid = Chemin["cheminid"],campagneid = campagne["id"])}} > Détail du chemin </a> </p>
+			{% endif %}
+
+			{% endfor %}
+		</div>
+		{% endfor %}	
+
+
 	</div>
 </div>
-  </body>
+</body>
 
 
 <!-- SCRIPT ET RESSOURCES -->
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="/resources/demos/style.css">
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script> $( function() { $( "#accordion" ).accordion(); } ); </script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script> $( function() { $( "#accordion" ).accordion(); } ); </script>
 
 </html>

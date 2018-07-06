@@ -121,6 +121,14 @@ def session(sessionid):
 
     return render_template("Session.html",rows = rows, name = name, countdown = countdown, SessionName = SessionName)  
 
+# =================================== Submit ==================================================================
+# ============================================================================================================
+
+# ROUTES    
+@app.route('/Submit', methods=["GET", "POST"])
+def submit():
+    return render_template("Submit.html")
+
 
 # =================================== Remove Campagne ========================================================
 # ============================================================================================================
@@ -364,7 +372,7 @@ class FormCampagne(Form):
 class FormSession(Form):
 
     #Nom de la session
-    sessionName = StringField('Nom de la session (Identifiant participant etc..)')
+    sessionName = StringField('Clée participant (Identifiant participant etc..)')
 
     #Selection de la campagne liée à la session
     campagne = SelectField('Campagne liée à la session')

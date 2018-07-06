@@ -101,10 +101,10 @@ function ValideSession (elmnt) {
 	  	console.log("Json sent");
 	})
 
-	document.body.children[4].style.display="block"
+	document.getElementsByClassName("loading")[0].style.display="block"
 	// Un retour immediat annule la requete, donc, on attends 200ms et c'est le retour à l'index
 	setTimeout(function() {
-		window.location = "/";
+		window.location = "/Submit";
 	},2000)
 };
 
@@ -129,7 +129,6 @@ $(".hideInfo").click(function(){
     console.log(" Coordonnés actuels :  "+COORD)
     console.log(" Association colonne :  "+ASSCOL)
     console.log(" Association ligne :  "+ASSLIG)
-    
 	
 
 

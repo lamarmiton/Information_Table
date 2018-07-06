@@ -6,17 +6,28 @@
 	<h1 class="titre">Creation d'une nouvelle campagne</h1>
 
 	<form method=post enctype=multipart/form-data>
+
+		
+
 		<dl>
 			{{ render_field(form.nom) }}
 		</dl>
-
+		<p> Nom de la session. Eviter les doublons.</p>
+		
+		<p>	Temps en secondes. Pour avoir une session avec un temps infini, ecrire 0.</p>
 		<dl>
 			{{ render_field(form.countdown) }}
 		</dl>
 
+		
+		<p> Importation du fichier Excel de référence ( Au format Exel xml : .xlsx ) </p>
+		
 		<p><input type=file name=file >
 
-			<p><input type=submit value=Confirmer>
+			<p><input type=submit value=Créer>
+
+		
+
 	</form>
 </div>
 </body>
