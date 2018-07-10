@@ -24,11 +24,32 @@
 		
 		<p><input type=file name=file >
 
-			<p><input type=submit value=Créer>
+			<p>
 
+				<input class = "submit" type=submit value=Créer>
+
+				<div class="alert alert-success fade in" style="display: none;">
+					<a href="#" class="close" data-dismiss="alert">&times;</a>
+					<strong>Success!</strong> La campagne a bien été prise en compte
+				</div>
+
+
+
+			</form>
+		</div>
+	</body>
+
+	<script type="text/javascript">
 		
+		$(".submit").click(function(){
 
-	</form>
-</div>
-</body>
-</html>
+				window.location = "/";
+
+
+
+
+		});
+
+	</script>
+
+	</html>

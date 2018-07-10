@@ -34,12 +34,16 @@ def selectAll(table):
     return cur
 
 #Selection d'un attribut dans une campagne
-def selectFromTable(attr,table,idtable):
+def selectFromTable(attr,table,select = ""):
 
     #Récupération du chemin d'accés vers le fichier Excel de la campagne
-    request = 'SELECT '+attr+' FROM '+table+' WHERE '+idtable+';'
+    request = 'SELECT '+attr+' FROM '+table
+
+    if select != "":
+    	request += ' WHERE '+select
+
     #Retour de la requete
-    cur,con = executeRequest(request)
+    cur,con = executeRequest(request+';')
     return cur
 
 #Supprime les éléments d'une table

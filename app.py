@@ -246,6 +246,8 @@ def invits():
 
         req.insertIntoSession(form.sessionName.data,form.campagne.data)
 
+        return redirect("/Session", code=302)
+
 
     return render_template("Invits.html",form=form, lastid = len(req.selectAll("Session").fetchall()) )
 
@@ -273,22 +275,29 @@ def upload_file():
 
         # if user does not select file, browser also
         # submit a empty part without filename
-        if file.filename == '':
+        if file.filename == '' :
             flash('No selected file')
             return redirect(request.url)
 
         #Si tout se passe bien : Alors on upload le fichier, et on peuple la base de donnée
         if file and allowed_file(file.filename):
 
-            #Le nom du fichier est identifiant aleatoire
-            filename = binascii.hexlify(os.urandom(16))
-            
-            #Si les repertoires n'existent pas alors il sont créés
-            if not os.path.exists(UPLOAD_FOLDER+"/ExcelFile"):
-                os.makedirs(UPLOAD_FOLDER+"/ExcelFile")
 
-            req.insertIntoCampagne(form.nom.data,os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename),form.countdown.data)
-            file.save(os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename))
+            if form.nom.data not in req.selectFromTable("nom","campagne").fetchall():
+
+                #Le nom du fichier est identifiant aleatoire
+                filename = binascii.hexlify(os.urandom(16))
+                
+                #Si les repertoires n'existent pas alors il sont créés
+                if not os.path.exists(UPLOAD_FOLDER+"/ExcelFile"):
+                    os.makedirs(UPLOAD_FOLDER+"/ExcelFile")
+
+                req.insertIntoCampagne(form.nom.data,os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename),form.countdown.data)
+                file.save(os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename))
+
+                return redirect("/Campagne", code=302)
+
+
             
 
     return render_template("CreationDeCampagne.html", form=form)
