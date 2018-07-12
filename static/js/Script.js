@@ -184,7 +184,4 @@ var interval = setInterval(function() {
 
 }, 1);
 
-
-
-
 });

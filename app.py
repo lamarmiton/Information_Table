@@ -212,6 +212,14 @@ def download(campagneid,cheminid):
     return send_file(excelPath,"Chemin_"+str(cheminid),as_attachment=True)
 
 
+# =================================== Téléchargement du fichier Excel de référence  ==========================
+# ============================================================================================================
+
+@app.route('/downloadExemple', methods=["GET", "POST"])
+def downloadExemple():
+    return send_file("data/Exemple.xlsx",as_attachment=True)
+
+
 # =================================== Téléchargement de tous les participants à une campagne =================
 # ============================================================================================================
 

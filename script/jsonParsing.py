@@ -47,8 +47,6 @@ def jsonToExcelAll(rows,indics,campagneid,excelPath,SessionNames):
 
     writer = pd.ExcelWriter(excelPath)
 
-    print range(len(rows))
-
     for user in range(len(rows)):
 
         #Id de la session 

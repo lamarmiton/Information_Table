@@ -128,7 +128,13 @@ table{
         {%                 for case in rows[row]          %}
         <td class = "case" style="width:20%; height:150px">
           <div class = "hideInfo" onclick="showCase(this)"> <img  src = "{{ url_for('static', filename = 'img/icons/hide.jpeg' ) }}"  width = 60 height= 60> </div>
-          <div class = "info" onclick="zoomIn(this)" style = "display: none"> <img src= "{{ url_for('static',filename = case ) }}"  width = 150 height= 100  alt = "{{case}}">   </div>
+          <div class = "info" onclick="zoomIn(this)" style = "display: none"> <img src= "{{ url_for('static',filename = case ) }}"  width = 150 height= 100
+
+          onerror="
+          this.parentElement.innerText = '{{ case }}';
+          this.style.display='none';
+
+          ">   </div>
         </td>
         {%                        endfor                  %}
 
