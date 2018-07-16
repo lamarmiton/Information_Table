@@ -17,9 +17,9 @@ def executeRequest(request):
 
 
 def init():
-    cur,con = executeRequest('CREATE TABLE IF NOT EXISTS campagne (  id INTEGER PRIMARY KEY,  nom varchar(20),  Pathfile varchar(20),  countdown int )')
-    cur,con = executeRequest('CREATE TABLE IF NOT EXISTS Chemin (  cheminid INTEGER PRIMARY KEY,  chemin TEXT,  campagneid INTEGER , SessionName TEXT)')
-    cur,con = executeRequest('CREATE TABLE IF NOT EXISTS Session (  id INTEGER PRIMARY KEY,  SessionName TEXT,  campagneid INTEGER )')
+    cur,con = executeRequest('CREATE TABLE IF NOT EXISTS campagne (  id INTEGER PRIMARY KEY,  nom varchar(20),  Pathfile varchar(20),  countdown int, form1 TEXT, form2 TEXT )')
+    cur,con = executeRequest('CREATE TABLE IF NOT EXISTS Chemin (  cheminid INTEGER PRIMARY KEY,  chemin TEXT,  campagneid INTEGER , token TEXT)')
+    cur,con = executeRequest('CREATE TABLE IF NOT EXISTS Session (  id INTEGER PRIMARY KEY, token TEXT, campagneid INTEGER )')
     closeDB(con)
 
 
@@ -64,24 +64,24 @@ def deleteFromTable(table,attr=""):
 
 
 #Insertion dans la table Campagne
-def insertIntoCampagne(nom="",Pathfile="",countdown=""):
+def insertIntoCampagne(nom="",Pathfile="",countdown="",form1="",form2=""):
 
-    requestInsert = 'INSERT INTO campagne (nom, Pathfile,countdown) VALUES (\"'+nom+'\",\"'+Pathfile+'\",'+countdown+');'
+    requestInsert = 'INSERT INTO campagne (nom, Pathfile,countdown,form1,form2) VALUES (\"'+nom+'\",\"'+Pathfile+'\",\"'+countdown+'\",\"'+form1+'\",\"'+form2+'\");'
     cur,con = executeRequest(requestInsert)
     closeDB(con)
 
 
 #Insertion dans la table Chemin
-def insertIntoChemin(chemin="",campagneid="",SessionName=""):
+def insertIntoChemin(chemin="",campagneid="",token=""):
 
-    requestInsert = 'INSERT INTO Chemin (chemin,campagneid,SessionName) VALUES (\"'+chemin+'\",\"'+campagneid+'\",\"'+SessionName+'\");'
+    requestInsert = 'INSERT INTO Chemin (chemin,campagneid,token) VALUES (\"'+chemin+'\",\"'+campagneid+'\",\"'+token+'\");'
     cur,con = executeRequest(requestInsert)
     closeDB(con)
 
 #Insertion dans la table Session
-def insertIntoSession(SessionName="",campagneid=""):
+def insertIntoSession(token="",campagneid=""):
 
-    requestInsert = 'INSERT INTO Session (SessionName,campagneid) VALUES (\"'+SessionName+'\",\"'+campagneid+'\");'
+    requestInsert = 'INSERT INTO Session (token,campagneid) VALUES (\"'+token+'\",\"'+str(campagneid)+'\");'
     cur,con = executeRequest(requestInsert)
     closeDB(con)
     

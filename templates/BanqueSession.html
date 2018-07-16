@@ -2,7 +2,7 @@
 
 <title>Sessions disponibles</title>
 
-<div class="container">
+<div class="container">	
 
 <h1 class="titre" style = "padding-bottom: 2%;"> Sessions disponibles </h1>
 
@@ -14,14 +14,8 @@
 				<h3>{{campagne["nom"]}}</h3>
 
 				<div>
-					{% for Session in rowsSession %}
+							<p> <a href={{ url_for('form1',campagneid = campagne["id"])}} > Lien vers la table d'information </a> </p>
 
-						{% if Session["campagneid"] == campagne["id"]%}
-						<li> Session : {{ Session["SessionName"] }} </li>
-						<p> <a href={{ url_for('session',sessionid = Session["id"])}} > http://informationtable-tableinformation.7e14.starter-us-west-2.openshiftapps.com/Session/{{ Session["id"] }} </a> </p>
-						{% endif %}
-
-					{% endfor %}
 				</div>
 			{% endfor %}	
       

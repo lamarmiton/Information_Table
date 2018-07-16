@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<style type="text/css">
+
+
+<meta charset="utf-8" >
+
+html {
+  background-color : white;
+  margin : 0 auto;
+  padding : 0 auto;
+}
+
+body {
+  padding-top : 54px;
+  position : relative;
+}
+
+@media (min-width : 992px) {
+  body {
+    padding-top : 56px;
+  }
+}
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:300');
+.titre {
+  font-family: 'Roboto', sans-serif;
+  padding-bottom: 2%;
+}
+
+
+table{
+  size : 50%;
+} 
+
+table{
+  size : 50%;
+} 
+
+</style>
+
+
+
+<script>
+
+  var flag=0
+function apply() // Gestion de l'état de lecture de l'iframe
+{
+  console.log(flag)
+  if (flag==0)
+  {
+    flag++;
+  }
+  else
+  {
+    flag=0;
+    document.getElementById("frame").style.display="none";
+    document.getElementById("GoToIDB").style.display="block";
+    
+  }
+
+}
+
+function url(id) // Forgeage de l'URL avec l'ID utilisateur : le google form est rempli automatiquement
+{
+  return "{{ form1 }}"+id;
+}
+
+
+</script>
+<header>
+  <!-- CSS et scripts de Bootstrap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</header>
+
+<body style="padding: 0px">
+
+  <div align="center" style="padding-top:0px;">
+    <title>Formulaire Partie 1 </title>
+
+    <iframe id="frame" src="#" width="80%" height="1000px" onload="apply()">
+    </iframe>
+
+    <div class="well well-lg" id="GoToIDB" style="display: none;">
+      <a href={{ url_for('session',campagneid = campagneid, token = token) }}> Lien vers la table d'information </a>
+    </div>
+
+  </div>
+</body>
+<!-- Script comportemental de la page -->
+<script>
+  document.getElementById("frame").src = url( " {{ token }} " );
+</script>
+
+
+
+</html>

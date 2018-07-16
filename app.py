@@ -89,12 +89,8 @@ def BanqueSession():
 
     #Selection des campagnes
     rowsCampagne = req.selectAll("campagne").fetchall()
-    #Selection des sessions
-    rowsSession = req.selectAll("Session").fetchall()
-    #Selection des chemis
-    rowsChemin = req.selectAll("Chemin").fetchall()
 
-    return render_template("BanqueSession.html", rowsCampagne = rowsCampagne, rowsSession = rowsSession)
+    return render_template("BanqueSession.html", rowsCampagne = rowsCampagne)
 
 # =================================== Session : Table d'information ==========================================
 # ============================================================================================================
@@ -102,12 +98,9 @@ def BanqueSession():
 #Page de la session : La complétion de l'étude par un répondant
 #La creation de la session est lié à la campagne (Retrouvée par son id)
 #La session est généré aléatoirement via le fichier Excel de la campagne
-@app.route('/Session/<int:sessionid>/', methods=["GET", "POST"])
-def session(sessionid):
+@app.route('/Session/<int:campagneid>/<string:token>', methods=["GET", "POST"])
+def session(campagneid,token):
 
-    SessionName = req.selectFromTable("SessionName","Session","id = "+str(sessionid)).fetchone()[0]
-
-    campagneid = req.selectFromTable("campagneid","Session","id = "+str(sessionid)).fetchone()[0]
     #Récupération du chemin d'accés vers le fichier Excel
     chemin = req.selectFromTable("Pathfile","campagne","id ="+str(campagneid)).fetchone()[0]
 
@@ -117,9 +110,35 @@ def session(sessionid):
 
     #Construction du tableau grâce au script python tableIDB.python
     #Le tableau[-1] signifie que l'on prendra toujours le dernier tableau créé
-    rows = parseExcel(str(chemin),campagneid).tableau[-1].dic
+    rows = parseExcel(str(chemin),campagneid).tableau
 
-    return render_template("Session.html",rows = rows, name = name, countdown = countdown, SessionName = SessionName)  
+    return render_template("Session.html",rows = rows[-1].dic, name = name, countdown = countdown,campagneid = campagneid, token = token)  
+
+
+#Page de la session : La complétion de l'étude par un répondant
+#La creation de la session est lié à la campagne (Retrouvée par son id)
+#La session est généré aléatoirement via le fichier Excel de la campagne
+@app.route('/Form_1/<int:campagneid>/', methods=["GET", "POST"])
+def form1(campagneid):
+    token = "C"+str(campagneid)+"ID"+binascii.hexlify(os.urandom(3))
+    req.insertIntoSession(token,campagneid)
+
+    form1 = req.selectFromTable("form1","campagne","id = "+str(campagneid)).fetchone()[0]
+
+    return render_template("Form_1.html",campagneid = campagneid, token = token, form1 = form1)  
+
+
+
+#Page de la session : La complétion de l'étude par un répondant
+#La creation de la session est lié à la campagne (Retrouvée par son id)
+#La session est généré aléatoirement via le fichier Excel de la campagne
+@app.route('/Form_2/<int:campagneid>/<string:token>', methods=["GET", "POST"])
+def form2(campagneid,token):
+
+    form2 = req.selectFromTable("form2","campagne","id = "+str(campagneid)).fetchone()[0]
+    return render_template("Form_2.html",campagneid = campagneid, token = token, form2 = form2)  
+
+
 
 # =================================== Submit ==================================================================
 # ============================================================================================================
@@ -187,8 +206,8 @@ def chemin(cheminid,campagneid):
     #La fonction buildIndic récupere le tableau des données, et construit des indicateurs avec.
     indics = buildIndic(rows)
 
-    sessionName = req.selectFromTable("SessionName","Chemin","cheminid ="+str(cheminid)).fetchone()[0]
-    return render_template("Chemin.html",rows = rows, indics = indics, cheminid = cheminid,campagneid = campagneid, sessionName = sessionName)  
+    token = req.selectFromTable("token","Chemin","cheminid ="+str(cheminid)).fetchone()[0]
+    return render_template("Chemin.html",rows = rows, indics = indics, cheminid = cheminid,campagneid = campagneid, token = token)  
 
 
 # =================================== Téléchargement du chemin format Excel ==================================
@@ -230,7 +249,7 @@ def downloadUser(campagneid):
     rows = [jsonParsing(user[0]) for user in req.selectFromTable("chemin","Chemin","campagneid ="+str(campagneid)).fetchall()]
 
     #Liste des noms des participants à la campagne
-    SessionNames = [user for user in req.selectFromTable("SessionName","Chemin","campagneid ="+str(campagneid)).fetchall()]
+    token = [user for user in req.selectFromTable("token","Chemin","campagneid ="+str(campagneid)).fetchall()]
 
     #La fonction buildIndic récupere le tableau des données, et construit des indicateurs avec.
     indics = [buildIndic(indic) for indic in rows]
@@ -239,31 +258,9 @@ def downloadUser(campagneid):
     excelPath = UPLOAD_FOLDER+'/Session/'+str(campagneid)+'/'+"Campagne_"+str(campagneid)+'.xlsx'
 
     with open(excelPath,'w') as outfile:
-        jsonToExcelAll(rows,indics,campagneid,excelPath,SessionNames)
+        jsonToExcelAll(rows,indics,campagneid,excelPath,token)
 
     return send_file(excelPath,"Campagne_"+str(campagneid),as_attachment=True)
-
-
-# =================================== Envoit invitation ======================================================
-# ============================================================================================================
-
-@app.route('/Invits', methods=["GET", "POST"])
-def invits():
-    form = FormSession(request.form)
-    if request.method == 'POST':
-
-        req.insertIntoSession(form.sessionName.data,form.campagne.data)
-
-        return redirect("/Session", code=302)
-
-
-    return render_template("Invits.html",form=form, lastid = len(req.selectAll("Session").fetchall()) )
-
-
-
-@app.route('/Invits/<int:sessionid>', methods=["GET", "POST"])
-def invitation(sessionid):
-    return render_template("Invitation.html",sessionid=sessionid)
 
 
 # =================================== Creation de campagne ===================================================
@@ -300,7 +297,7 @@ def upload_file():
                 if not os.path.exists(UPLOAD_FOLDER+"/ExcelFile"):
                     os.makedirs(UPLOAD_FOLDER+"/ExcelFile")
 
-                req.insertIntoCampagne(form.nom.data,os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename),form.countdown.data)
+                req.insertIntoCampagne(form.nom.data,os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename),form.countdown.data,form.form1.data,form.form2.data)
                 file.save(os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename))
 
                 return redirect("/Campagne", code=302)
@@ -344,7 +341,7 @@ def submit_handler():
     
     #Le numéro de la campagne est retrouvé par une regex sur le nom de la session :
     #De la forme pa exemple : Session/1/ : On ne recherche que les digits ici
-    sessionid = re.search(r'\d+', dict_json['SessionName']).group()
+    campagneid = re.search(r'\d+', dict_json['CampagneID']).group()
 
     #On récupere l'id de la derniere session ayant été effectuée dans la meme campagne ( qui correspond au nombre de chemin)
     lastrowid = len(req.selectAll("Chemin").fetchall())
@@ -354,18 +351,17 @@ def submit_handler():
         lastrowid = 0
 
     #Si les repertoires n'existent pas alors il sont créés  
-    if not os.path.exists(UPLOAD_FOLDER+dict_json['SessionName']):
-        os.makedirs(UPLOAD_FOLDER+dict_json['SessionName'])
+    if not os.path.exists(UPLOAD_FOLDER+dict_json['CampagneID']):
+        os.makedirs(UPLOAD_FOLDER+dict_json['CampagneID'])
 
     #Insertion du tableau lié à la session dans la base de données
-    json_path = UPLOAD_FOLDER+dict_json['SessionName']+'dataChemin'+str(int(lastrowid)+1)+'.json'
+    json_path = UPLOAD_FOLDER+dict_json['CampagneID']+'dataChemin'+str(int(lastrowid)+1)+'.json'
+    print campagneid
 
+    token = req.selectFromTable("token","Session","id = "+str(campagneid)).fetchone()[0]
 
-    sessionName = req.selectFromTable("SessionName","Session","id = "+str(sessionid)).fetchone()[0]
-
-    campagneid = req.selectFromTable("campagneid","Session","id = "+str(sessionid)).fetchone()[0]
-
-    req.insertIntoChemin(json_path,str(campagneid),sessionName)
+    print token 
+    req.insertIntoChemin(json_path,str(campagneid),token)
 
     #Le fichier json enegistrant le chemin de l'utilisateur dans sa session est enregistré
     with open(json_path,'w') as outfile:
@@ -384,20 +380,10 @@ def submit_handler():
 class FormCampagne(Form):
     nom = StringField('Nom de l\'expérience', [validators.Length(min=4, max=25)])
     countdown = StringField('Durée de l\'expérience')
+    form1 = StringField('Formulaire 1')
+    form2 = StringField('Formulaire 2')
 
-#Création de session
-class FormSession(Form):
 
-    #Nom de la session
-    sessionName = StringField('Clée participant (Identifiant participant etc..)')
-
-    #Selection de la campagne liée à la session
-    campagne = SelectField('Campagne liée à la session')
-
-    # Menu déroulant, se méttant à jour en meme temps que la base de donnée
-    def __init__(self, *args, **kwargs):
-        super(FormSession, self).__init__(*args, **kwargs)
-        self.campagne.choices = [(row["id"], row["nom"]) for row in req.selectAll("campagne").fetchall()]
 
 
 

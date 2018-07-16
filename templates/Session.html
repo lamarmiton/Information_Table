@@ -154,4 +154,13 @@ table{
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="/static/js/Script.js"></script>
 <script src="/static/js/zoom.js"></script>
+
+<script type="text/javascript">
+  
+// Mets fin à l'experience, construction du fichier JSON à exporter
+$(".alternative").click(function(){
+    ValideSession($(this)[0].innerText, " {{ url_for('form2',campagneid = campagneid, token = token ) }} " );
+});
+
+</script>
 </html>

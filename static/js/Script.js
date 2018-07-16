@@ -79,9 +79,9 @@ function zoomIn (elmnt) {
 
 };
 
-function ValideSession (elmnt) {
+function ValideSession (elmnt,location) {
 
-	chemin = { "FinalChoice" : unescape(decodeURIComponent(elmnt)), "SessionName" : window.location.pathname, "Chemin" : [] }
+	chemin = { "FinalChoice" : unescape(decodeURIComponent(elmnt)), "CampagneID" : window.location.pathname, "Chemin" : [] }
   	index = 0
 	ASSLIG.forEach(function(value){
 
@@ -104,7 +104,7 @@ function ValideSession (elmnt) {
 	document.getElementsByClassName("loading")[0].style.display="block"
 	// Un retour immediat annule la requete, donc, on attends 200ms et c'est le retour à l'index
 	setTimeout(function() {
-		window.location = "/Submit";
+		window.location = location ;
 	},2000)
 };
 
@@ -136,11 +136,6 @@ $(".hideInfo").click(function(){
 
 });
 
-
-// Mets fin à l'experience, construction du fichier JSON à exporter
-$(".alternative").click(function(){
-  	ValideSession($(this)[0].innerText);
-});
 
 // Compte à rebours
 
