@@ -81,7 +81,7 @@ function zoomIn (elmnt) {
 
 function ValideSession (elmnt,location) {
 
-	chemin = { "FinalChoice" : unescape(decodeURIComponent(elmnt)), "CampagneID" : window.location.pathname, "Chemin" : [] }
+	chemin = { "Token" : window.location.pathname.substring(11, window.location.pathname.length), "FinalChoice" : unescape(decodeURIComponent(elmnt)), "CampagneID" : window.location.pathname, "Chemin" : [] }
   	index = 0
 	ASSLIG.forEach(function(value){
 
@@ -129,10 +129,9 @@ $(".hideInfo").click(function(){
     console.log(" Coordonnés actuels :  "+COORD)
     console.log(" Association colonne :  "+ASSCOL)
     console.log(" Association ligne :  "+ASSLIG)
-	
-
 
 	}, 500)
+
 
 });
 
@@ -178,5 +177,5 @@ var interval = setInterval(function() {
 	}
 
 }, 1);
-
+	
 });

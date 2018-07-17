@@ -3,12 +3,13 @@ import statistics
 import pandas as pd
 import json
 import pprint as p
+from collections import OrderedDict
 
 # FONCTION 
 
 #Enleve les caractere nuisibles des tableaux transformés en chaine de caractere
 def formatStr(string):
-    return string.replace("]", "").replace("[","").replace("'","").replace("u","")
+    return string.replace("]", "").replace("[","").replace("u'","")
 
 #Prend en entrée un dictionnaire Json, et construit des indicateurs avec
 def buildIndic(rows):
@@ -47,29 +48,41 @@ def jsonToExcelAll(rows,indics,campagneid,excelPath,SessionNames):
 
     writer = pd.ExcelWriter(excelPath)
 
+    #Id de la session 
+    d = OrderedDict()
+    d['Token'] = ''
+    d['Coords'] = ''
+    d['Association Ligne'] = ''
+    d['Association Col'] = ''
+    d['Moyenne'] = ''
+    d['Temps total'] = ''
+    d['Choix Final'] = ''
+    d['Id Campagne'] = ''
+
+    pd.DataFrame(d,index = range(8)).to_excel(writer,'Sheet1',index = None,startrow=0,startcol=0)
+    
     for user in range(len(rows)):
 
         #Id de la session 
-        pd.DataFrame({'Session' :  SessionNames[user] }).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=0)
+        pd.DataFrame({'Session' :  SessionNames[user] }).to_excel(writer,'Sheet1',index = None,header=None,startrow=user+1,startcol=0)
         
         #Chemin en coordonnée :
-        pd.DataFrame({'Coords' : formatStr(str([ rows[user]['Chemin'][i]['Coords'] for i in range(len(rows[user]['Chemin'])) ])).encode("utf-8")},index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=1)
+        pd.DataFrame({'Coords' : formatStr(str([ rows[user]['Chemin'][i]['Coords'] for i in range(len(rows[user]['Chemin'])) ])).encode("utf-8")},index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user+1,startcol=1)
         
         #Association en Ligne :
-        pd.DataFrame({'Association Ligne' : formatStr(str([ rows[user]['Chemin'][i]['AssLig'] for i in range(len(rows[user]['Chemin'])) ])).encode("utf-8") },index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=2)
+        pd.DataFrame({'Association Ligne' : formatStr(str([ rows[user]['Chemin'][i]['AssLig'] for i in range(len(rows[user]['Chemin'])) ])).encode("utf-8") },index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user+1,startcol=2)
         
         #Association en colonne :
-        pd.DataFrame({'Association Col' : formatStr(str([ rows[user]['Chemin'][i]['AssCol'] for i in range(len(rows[user]['Chemin'])) ])).encode("utf-8") },index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=3)
+        pd.DataFrame({'Association Col' : formatStr(str([ rows[user]['Chemin'][i]['AssCol'] for i in range(len(rows[user]['Chemin'])) ])).encode("utf-8") },index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user+1,startcol=3)
         
         #Moyenne de temps passé et somme
-        pd.DataFrame({'Moyenne': indics[user]["Moyenne"], 'Temps total': indics[user]["Somme"],'Choix Final':rows[user]["FinalChoice"]},index = ['#']).to_excel(writer, sheet_name='Sheet1',index = None,header=None,startrow=user,startcol=4)
+        pd.DataFrame({'Moyenne': indics[user]["Moyenne"], 'Temps total': indics[user]["Somme"]},index = ['#']).to_excel(writer, sheet_name='Sheet1',index = None,header=None,startrow=user+1,startcol=4)
         
         #Choix Final du chemin
-        pd.DataFrame({'Choix Final': rows[user]["FinalChoice"], 'Id Campagne': campagneid },index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user,startcol=5)
+        pd.DataFrame({'Choix Final':rows[user]["FinalChoice"], 'Id Campagne': campagneid },index = range(len(rows))).to_excel(writer,'Sheet1',index = None,header=None,startrow=user+1,startcol=6)
 
-        
+
     writer.save()
-
 
 
 

@@ -117,7 +117,8 @@ def session(campagneid,token):
 
 #Page de la session : La complétion de l'étude par un répondant
 #La creation de la session est lié à la campagne (Retrouvée par son id)
-#La session est généré aléatoirement via le fichier Excel de la campagne
+#Le token de session est généré aléatoirement, et fait le lien entre la page 1 du formulaire, la table d"information
+# Et la page 2 du formulaire Google
 @app.route('/Form_1/<int:campagneid>/', methods=["GET", "POST"])
 def form1(campagneid):
     token = "C"+str(campagneid)+"ID"+binascii.hexlify(os.urandom(3))
@@ -131,7 +132,6 @@ def form1(campagneid):
 
 #Page de la session : La complétion de l'étude par un répondant
 #La creation de la session est lié à la campagne (Retrouvée par son id)
-#La session est généré aléatoirement via le fichier Excel de la campagne
 @app.route('/Form_2/<int:campagneid>/<string:token>', methods=["GET", "POST"])
 def form2(campagneid,token):
 
@@ -358,9 +358,8 @@ def submit_handler():
     json_path = UPLOAD_FOLDER+dict_json['CampagneID']+'dataChemin'+str(int(lastrowid)+1)+'.json'
     print campagneid
 
-    token = req.selectFromTable("token","Session","id = "+str(campagneid)).fetchone()[0]
-
-    print token 
+    token = dict_json['Token']
+    
     req.insertIntoChemin(json_path,str(campagneid),token)
 
     #Le fichier json enegistrant le chemin de l'utilisateur dans sa session est enregistré
