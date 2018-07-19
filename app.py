@@ -1,7 +1,18 @@
 # -*- coding: utf-8 -*-
+
+#Import FLASK
 from flask import Flask, flash, request, redirect, url_for, render_template, send_file
+
+#Import de login
+from flask_simplelogin import SimpleLogin
+from flask_simplelogin import is_logged_in
+from flask_simplelogin import login_required
+
+#Import formulaires
 from werkzeug.utils import secure_filename
 from wtforms import Form, FieldList, SelectField, StringField, PasswordField, validators
+
+#Import divers
 import re
 import json
 import os
@@ -15,6 +26,7 @@ from tableIB import parseExcel
 from jsonParsing import jsonParsing, jsonToExcel, buildIndic,jsonToExcelAll
 import requete as req
 
+import base64
 #ENCODAGE UTF8
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -24,6 +36,7 @@ VIEWS_PATH = "static/views/"
 JS_PATH = "static/js/"
 UPLOAD_FOLDER = "data/Upload"
 ALLOWED_EXTENSIONS = set(['xlsx'])
+
 
 
 
@@ -38,14 +51,31 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 #Configuration de la session Flask
-app.secret_key = 'super secret key'
-app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = 'something-secret'
+
+
+#Pour le moment, et pour des raisons de test, il n'y a qu'un seul compte admin
+app.config['SIMPLELOGIN_USERNAME'] = req.selectFromTable("login","Admin").fetchone()[0]
+app.config['SIMPLELOGIN_PASSWORD'] = base64.b64decode(req.selectFromTable("password","Admin").fetchone()[0])
+
+
+
+
+
+# =================================== Login ==================================================================
+# ============================================================================================================
+
+#Page de login de l'administrateur
+@app.route('/login')
+def login():
+    return render_template("login.html")
 
 # =================================== Index ==================================================================
 # ============================================================================================================
 
 # ROUTES    
-@app.route('/', methods=["GET", "POST"])
+@app.route('/')
+@login_required
 def index():
     return render_template("main.html")
 
@@ -54,9 +84,17 @@ def index():
 
 #Dans la page campagne, on affiche la liste des campagnes
 @app.route('/Campagne', methods=["GET", "POST"])
+@login_required
 def campagne():
-    rows = req.selectAll("campagne").fetchall()
-    return render_template("Campagne.html", rows = rows)
+
+    if is_logged_in():
+        rows = req.selectAll("campagne").fetchall()
+        return render_template("Campagne.html", rows = rows)
+
+
+    else:
+        return redirect("/login", code=302)
+
 
 
 # ======================================= Affichage détaillé des campagnes ===================================
@@ -64,6 +102,7 @@ def campagne():
 
 #Affiche les differentes campagnes
 @app.route('/Campagne/<int:campagneid>/', methods=["GET", "POST"])
+@login_required
 def detailCampagne(campagneid):
 
     #Récupération du chemin d'accés vers le fichier Excel
@@ -85,12 +124,17 @@ def detailCampagne(campagneid):
 # ============================================================================================================
 
 @app.route('/Session', methods=["GET", "POST"])
+@login_required
 def BanqueSession():
 
-    #Selection des campagnes
-    rowsCampagne = req.selectAll("campagne").fetchall()
+    if is_logged_in():
+        #Selection des campagnes
+        rowsCampagne = req.selectAll("campagne").fetchall()
 
-    return render_template("BanqueSession.html", rowsCampagne = rowsCampagne)
+        return render_template("BanqueSession.html", rowsCampagne = rowsCampagne)
+
+    else:
+        return redirect("/login", code=302)
 
 # =================================== Session : Table d'information ==========================================
 # ============================================================================================================
@@ -154,6 +198,7 @@ def submit():
 
 #Supression de la campagne : Balayage et ménage des fichiers liés à celle-ci
 @app.route('/Delete/<int:campagneid>/', methods=["DELETE","GET"])
+@login_required
 def delete(campagneid):
 
     #Suppression des chemins de résolutions pour les sessions liées à la campagne. Les chemins sont stockés
@@ -183,21 +228,26 @@ def delete(campagneid):
 # ============================================================================================================
 
 @app.route('/Chemin', methods=["GET", "POST"])
+@login_required
 def banque():
+    if is_logged_in():
+        #Selection des campagnes
+        rowsCampagne = req.selectAll("campagne").fetchall()
+        #Selection des chemin
+        rowsChemin = req.selectAll("Chemin").fetchall()
+        #Selection des sessions
+        rowsSession = req.selectAll("Session").fetchall()
 
-    #Selection des campagnes
-    rowsCampagne = req.selectAll("campagne").fetchall()
-    #Selection des chemin
-    rowsChemin = req.selectAll("Chemin").fetchall()
-    #Selection des sessions
-    rowsSession = req.selectAll("Session").fetchall()
+        return render_template("Banque.html", rowsCampagne = rowsCampagne, rowsChemin = rowsChemin, rowsSession = rowsSession)
 
-    return render_template("Banque.html", rowsCampagne = rowsCampagne, rowsChemin = rowsChemin, rowsSession = rowsSession)
+    else:
+        return redirect("/login", code=302)
 
 # =================================== Affichage du chemin de la session ======================================
 # ============================================================================================================
 
 @app.route('/Chemin/<int:campagneid>/<int:cheminid>/', methods=["GET", "POST"])
+@login_required
 def chemin(cheminid,campagneid):
 
     #Selection du JSon d'un chemin
@@ -214,6 +264,7 @@ def chemin(cheminid,campagneid):
 # ============================================================================================================
 
 @app.route('/download/<int:campagneid>/<int:cheminid>/', methods=["GET", "POST"])
+@login_required
 def download(campagneid,cheminid):
 
     #Selection du JSon d'un chemin
@@ -235,6 +286,7 @@ def download(campagneid,cheminid):
 # ============================================================================================================
 
 @app.route('/downloadExemple', methods=["GET", "POST"])
+@login_required
 def downloadExemple():
     return send_file("data/Exemple.xlsx",as_attachment=True)
 
@@ -243,6 +295,7 @@ def downloadExemple():
 # ============================================================================================================
 
 @app.route('/downloadUser/<int:campagneid>', methods=["GET", "POST"])
+@login_required
 def downloadUser(campagneid):
 
     #Le tableau[-1] signifie que l'on prendra toujours le dernier tableau créé
@@ -268,40 +321,46 @@ def downloadUser(campagneid):
 
 # Onglet de creation de campagnes : Upload de fichiers CSV
 @app.route('/CreationDeCampagne', methods=['GET', 'POST'])
+@login_required
 def upload_file():
-    form = FormCampagne(request.form) 
-    if request.method == 'POST':
 
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
+    if is_logged_in():
 
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '' :
-            flash('No selected file')
-            return redirect(request.url)
+        form = FormCampagne(request.form) 
+        if request.method == 'POST':
 
-        #Si tout se passe bien : Alors on upload le fichier, et on peuple la base de donnée
-        if file and allowed_file(file.filename):
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+
+            # if user does not select file, browser also
+            # submit a empty part without filename
+            if file.filename == '' :
+                flash('No selected file')
+                return redirect(request.url)
+
+            #Si tout se passe bien : Alors on upload le fichier, et on peuple la base de donnée
+            if file and allowed_file(file.filename):
 
 
-            if form.nom.data not in req.selectFromTable("nom","campagne").fetchall():
+                if form.nom.data not in req.selectFromTable("nom","campagne").fetchall():
 
-                #Le nom du fichier est identifiant aleatoire
-                filename = binascii.hexlify(os.urandom(16))
-                
-                #Si les repertoires n'existent pas alors il sont créés
-                if not os.path.exists(UPLOAD_FOLDER+"/ExcelFile"):
-                    os.makedirs(UPLOAD_FOLDER+"/ExcelFile")
+                    #Le nom du fichier est identifiant aleatoire
+                    filename = binascii.hexlify(os.urandom(16))
+                    
+                    #Si les repertoires n'existent pas alors il sont créés
+                    if not os.path.exists(UPLOAD_FOLDER+"/ExcelFile"):
+                        os.makedirs(UPLOAD_FOLDER+"/ExcelFile")
 
-                req.insertIntoCampagne(form.nom.data,os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename),form.countdown.data,form.form1.data,form.form2.data)
-                file.save(os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename))
+                    req.insertIntoCampagne(form.nom.data,os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename),form.countdown.data,form.form1.data,form.form2.data)
+                    file.save(os.path.join(UPLOAD_FOLDER+"/ExcelFile", filename))
 
-                return redirect("/Campagne", code=302)
+                    return redirect("/Campagne", code=302)
 
+    else:
+        return redirect("/login", code=302)
 
             
 
@@ -388,9 +447,11 @@ class FormCampagne(Form):
 
 
 
-    
 # MAIN 
 if __name__ == '__main__':
+    
+    
+    SimpleLogin(app)
 
     #Initialisation de la base de donnée
     req.init()

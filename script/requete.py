@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlite3
+import base64
 
 #SCRIPT DE REQUETAGE : Liaison avec la base de donnée
 
@@ -20,6 +21,10 @@ def init():
     cur,con = executeRequest('CREATE TABLE IF NOT EXISTS campagne (  id INTEGER PRIMARY KEY,  nom varchar(20),  Pathfile varchar(20),  countdown int, form1 TEXT, form2 TEXT )')
     cur,con = executeRequest('CREATE TABLE IF NOT EXISTS Chemin (  cheminid INTEGER PRIMARY KEY,  chemin TEXT,  campagneid INTEGER , token TEXT)')
     cur,con = executeRequest('CREATE TABLE IF NOT EXISTS Session (  id INTEGER PRIMARY KEY, token TEXT, campagneid INTEGER )')
+
+    #Base de donnée des utilisateurs : Seulement un compte implenté pour question de sécuritée
+    cur,con = executeRequest('CREATE TABLE IF NOT EXISTS Admin (  id INTEGER PRIMARY KEY, login TEXT, password INTEGER )')
+
     closeDB(con)
 
 
@@ -84,6 +89,13 @@ def insertIntoSession(token="",campagneid=""):
     requestInsert = 'INSERT INTO Session (token,campagneid) VALUES (\"'+token+'\",\"'+str(campagneid)+'\");'
     cur,con = executeRequest(requestInsert)
     closeDB(con)
+
+#Insertion dans la table Session
+def insertIntoAdmin(login,password):
+
+    requestInsert = 'INSERT INTO Admin (login,password) VALUES (\"'+login+'\",\"'+base64.b64encode(password)+'\");'
+    cur,con = executeRequest(requestInsert)
+    closeDB(con)	
     
 
 
