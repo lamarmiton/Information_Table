@@ -168,9 +168,9 @@ def form1(campagneid):
     token = "C"+str(campagneid)+"ID"+binascii.hexlify(os.urandom(3))
     req.insertIntoSession(token,campagneid)
 
-    form1 = req.selectFromTable("form1","campagne","id = "+str(campagneid)).fetchone()[0]
+    form1 = req.selectFromTable("form1","campagne","id="+str(campagneid)).fetchone()[0]
 
-    return render_template("Form_1.html",campagneid = campagneid, token = token, form1 = form1)  
+    return render_template("Form_1.html",campagneid = campagneid, token = token, form1 = form1.replace(" ",""))  
 
 
 
@@ -179,8 +179,8 @@ def form1(campagneid):
 @app.route('/Form_2/<int:campagneid>/<string:token>', methods=["GET", "POST"])
 def form2(campagneid,token):
 
-    form2 = req.selectFromTable("form2","campagne","id = "+str(campagneid)).fetchone()[0]
-    return render_template("Form_2.html",campagneid = campagneid, token = token, form2 = form2)  
+    form2 = req.selectFromTable("form2","campagne","id ="+str(campagneid)).fetchone()[0]
+    return render_template("Form_2.html",campagneid = campagneid, token = token, form2 = form2.replace(" ",""))  
 
 
 
