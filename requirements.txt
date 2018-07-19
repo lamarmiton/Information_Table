@@ -1,5 +1,4 @@
 flask_simplelogin
-base64
 flask
 wtforms
 pandas
