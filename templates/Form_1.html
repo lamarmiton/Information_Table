@@ -55,8 +55,7 @@ function apply() // Gestion de l'état de lecture de l'iframe
   else
   {
     flag=0;
-    document.getElementById("frame").style.display="none";
-    document.getElementById("GoToIDB").style.display="block";
+    window.location = "{{url_for('session',campagneid = campagneid, token = token)}}";
     
   }
 
@@ -85,15 +84,11 @@ function url(id) // Forgeage de l'URL avec l'ID utilisateur : le google form est
     <iframe id="frame" src="#" width="80%" height="1000px" onload="apply()">
     </iframe>
 
-    <div class="well well-lg" id="GoToIDB" style="display: none;">
-      <a href={{ url_for('session',campagneid = campagneid, token = token) }}> Lien vers la table d'information </a>
-    </div>
-
   </div>
 </body>
 <!-- Script comportemental de la page -->
 <script>
-  document.getElementById("frame").src = url( " {{ token }} " );
+  document.getElementById("frame").src = url("{{token}}");
 </script>
 
 

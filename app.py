@@ -192,8 +192,8 @@ def delete(campagneid):
 
     #Suppression des chemins de résolutions pour les sessions liées à la campagne. Les chemins sont stockés
     #dans les dossiers du repertoire Session portant le numéro de la campagne
-    if os.path.exists(UPLOAD_FOLDER+'/Campagne/'+str(campagneid)):
-        shutil.rmtree(UPLOAD_FOLDER+'/Campagne/'+str(campagneid))
+    if os.path.exists(UPLOAD_FOLDER+'/Session/'+str(campagneid)):
+        shutil.rmtree(UPLOAD_FOLDER+'/Session/'+str(campagneid))
 
     #Suppression des fichiers et dossiers liés aux campagnes
     os.remove(req.selectFromTable("Pathfile","campagne","id ="+str(campagneid)).fetchone()[0])
