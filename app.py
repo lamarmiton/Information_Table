@@ -175,23 +175,12 @@ def form1(campagneid):
 
 
 #Page de la session : La complétion de l'étude par un répondant
-#La creation de la session est lié à la campagne (Retrouvée par son id)
+#Deuxieme partie du formulaire
 @app.route('/Form_2/<int:campagneid>/<string:token>', methods=["GET", "POST"])
 def form2(campagneid,token):
 
     form2 = req.selectFromTable("form2","campagne","id ="+str(campagneid)).fetchone()[0]
     return render_template("Form_2.html",campagneid = campagneid, token = token, form2 = form2.replace(" ",""))  
-
-
-
-# =================================== Submit ==================================================================
-# ============================================================================================================
-
-# ROUTES    
-@app.route('/Submit', methods=["GET", "POST"])
-def submit():
-    return render_template("Submit.html")
-
 
 # =================================== Remove Campagne ========================================================
 # ============================================================================================================

@@ -64,7 +64,7 @@ function apply() // Gestion de l'état de lecture de l'iframe
 
 function url(id) // Forgeage de l'URL avec l'ID utilisateur : le google form est rempli automatiquement
 {
-  return "{{form1}}"+id;
+  return ("{{form1}}"+id).replace(" ","");
 }
 
 

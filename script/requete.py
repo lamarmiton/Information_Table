@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import sqlite3
-import base64
 
 #SCRIPT DE REQUETAGE : Liaison avec la base de donnée
 
@@ -89,13 +88,6 @@ def insertIntoSession(token="",campagneid=""):
     requestInsert = 'INSERT INTO Session (token,campagneid) VALUES (\"'+token+'\",\"'+str(campagneid)+'\");'
     cur,con = executeRequest(requestInsert)
     closeDB(con)
-
-#Insertion dans la table Session
-def insertIntoAdmin(login,password):
-
-    requestInsert = 'INSERT INTO Admin (login,password) VALUES (\"'+login+'\",\"'+base64.b64encode(password)+'\");'
-    cur,con = executeRequest(requestInsert)
-    closeDB(con)	
     
 
 
